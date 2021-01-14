@@ -1,52 +1,63 @@
-$(document).ready(function(){
-	 
-   	 //$('.folder a').click(function() {
-     //this will bind click even on dynamically changed element     
-	 $(document).on('click','.folder a',function() {   
+$(document).ready(function () {
 
-    	var clickedLi = $(this).parent('li');
+    $(document).on('click', '.folder a, .drive a', function () {
+        let clickedLi = $(this).parent('li');
 
-    	if( clickedLi.attr('action') == 'open' ){
-    		clickedLi.find('ul').slideToggle( "fast" );
-    		return false;    		
+        if (clickedLi.attr('action') == 'open') {
+            clickedLi.find('ul').slideToggle("fast");
+            return false;
         }
-        
-    	if( clickedLi.attr('action') == '' ){
-    		clickedLi.attr('action','open')
-		
+
+        if (clickedLi.attr('action') == '') {
+            clickedLi.attr('action', 'open')
         }
-        
-        //get the fullpath
-        var data =  {
-        	      "path": clickedLi.attr('data_ref')
-        };
 
-    	$.ajax({ 
-    		  type: 'POST',
-    	      url: 'ajax.php', 
-    	      data: data, 
-    	      dataType: 'json',
-    	      context: document.body, 
-    	      success: function(){
-    	    	    //alert('AJAX successful');
-    	      }
-    	    })
-    	    .done(function(data) {
-        	 	var filetype;
-        	 	var list = clickedLi.append('<ul>').find('ul');
-    	    	$.each( data, function( i, val ) {
-    	    		
-        	    	if(val.type == "D")
-        	    		 filetype = 'folder';        	    	
-        	    	else
-        	    		filetype = 'file';	
-    	    		
-        	    	list.append('<li action="" data_ref="'+ val.full +'" class="'+ filetype +'"><a href="#">' + val.base + '</a></li>').hide(); 	    		
-    	    	});
+        $( ".currentDir" ).html(clickedLi.attr('data_ref') );
 
-    	    	list.slideToggle( "fast" );
-    	    	
-    	    });
-    	    return false; // keeps the page from not refreshing
+        if(clickedLi.attr('class') == 'file') {
+            if (!window.confirm("Download a file?")) {
+                return false;
+            }
+
+            $.ajax({
+                url: 'download.php?filepath=' + btoa(clickedLi.attr('data_ref')),
+                type: 'POST',
+                success: function() {
+                    window.open('download.php?filepath=' + btoa(clickedLi.attr('data_ref')));
+                }
+            });
+            return true;
+        }
+
+        $.ajax({
+            url: 'ajax.php',
+            type: 'POST',
+            data: {"path": clickedLi.attr('data_ref')},
+            dataType: 'json',
+            context: document.body,
+            success: function () {
+
+            }
+        })
+            .done(function (data) {
+                let filetype;
+                let href;
+                let list = clickedLi.append('<ul>').find('ul');
+                $.each(data, function (i, val) {
+
+                    if (val.type == "D") {
+                        filetype = 'folder';
+                    }
+                    else {
+                        filetype = 'file';
+                    }
+
+                    list.append('<li action="" data_ref="' + val.full + '" class="' + filetype + '"><a href="#">' + val.base + '</a></li>').hide();
+                });
+
+                list.slideToggle("fast");
+
+            });
+        return false;
     });
 });
