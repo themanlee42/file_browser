@@ -6,7 +6,7 @@ Simple Ajax PHP File Browser for Windows
 
 ![Alt text](https://github.com/themanlee42/file_browser/blob/master/screenshots/file_browser01.png?raw=true)
 
-![Alt text](https://github.com/themanlee42/file_browser/blob/master/screenshots/file_browser02.pngraw=true)
+![Alt text](https://github.com/themanlee42/file_browser/blob/master/screenshots/file_browser02.png?raw=true)
 
 Update History
 
